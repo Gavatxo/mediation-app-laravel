@@ -1,0 +1,71 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: mediation-app-dev
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ../:/var/www
+    networks:
+      - mediation-dev
+    depends_on:
+      - mysql
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    container_name: mediation-nginx-dev
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ../:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - mediation-dev
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: mediation-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: mediation_dev
+      MYSQL_ROOT_PASSWORD: root_password_dev_2024
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_password_secure_2024
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+    networks:
+      - mediation-dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: mediation-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - mediation-dev
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mediation-mailhog-dev
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - mediation-dev
+
+volumes:
+  mysql_dev_data:
+
+networks:
+  mediation-dev:
+    driver: bridge
