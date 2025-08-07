@@ -1,21 +1,53 @@
 // resources/js/Pages/Dashboard.jsx
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardCard from '@/Components/DashboardCard';
 import { Head, Link } from '@inertiajs/react';
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { 
+    FolderOpen, 
+    Activity, 
+    Bell, 
+    TrendingUp, 
+    Plus,
+    Eye,
+    LayoutGrid,
+    AlertCircle,
+    Clock
+} from "lucide-react"
 
 export default function Dashboard({ auth, stats = {} }) {
-    // Données de démonstration (à remplacer par vraies données plus tard)
-    const defaultStats = {
+    // Données de démonstration améliorées
+    const dashboardStats = {
         total_dossiers: 127,
         dossiers_actifs: 23,
         notifications: 5,
+        taux_reussite: 87,
         actions_recentes: [
-            { id: 1, action: 'Nouveau dossier créé', dossier: 'MED-2025-001', time: '2 min ago' },
-            { id: 2, action: 'Rendez-vous planifié', dossier: 'MED-2025-002', time: '1h ago' },
-            { id: 3, action: 'Document envoyé', dossier: 'MED-2024-999', time: '3h ago' },
-        ]
+            { 
+                id: 1, 
+                action: 'Nouveau dossier créé', 
+                dossier: 'MED-2025-001', 
+                time: '2 min ago',
+                type: 'success'
+            },
+            { 
+                id: 2, 
+                action: 'Rendez-vous planifié', 
+                dossier: 'MED-2025-002', 
+                time: '1h ago',
+                type: 'info'
+            },
+            { 
+                id: 3, 
+                action: 'Document envoyé', 
+                dossier: 'MED-2024-999', 
+                time: '3h ago',
+                type: 'info'
+            },
+        ],
+        ...stats
     };
-
-    const dashboardStats = { ...defaultStats, ...stats };
 
     return (
         <AuthenticatedLayout
@@ -23,239 +55,172 @@ export default function Dashboard({ auth, stats = {} }) {
             header={
                 <div className="flex justify-between items-center">
                     <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                        Dashboard - Médiation
+                        Dashboard Médiation
                     </h2>
-                    <div className="text-sm text-gray-500">
-                        Connecté en tant que {auth.user.name}
-                    </div>
+                    <Badge variant="outline" className="text-sm">
+                        {new Date().toLocaleDateString('fr-FR')}
+                    </Badge>
                 </div>
             }
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div className="py-8">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
                     
-                    {/* Message de bienvenue */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900 bg-gradient-to-r from-blue-50 to-indigo-50">
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                        <span className="text-2xl">👋</span>
-                                    </div>
+                    {/* Message de bienvenue amélioré */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-100 rounded-lg p-6 border border-blue-200">
+                        <div className="flex items-center">
+                            <div className="flex-shrink-0">
+                                <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span className="text-2xl">👋</span>
                                 </div>
-                                <div className="ml-4">
-                                    <h3 className="text-lg font-medium text-gray-900">
-                                        Bienvenue, {auth.user.name}!
-                                    </h3>
-                                    <p className="text-gray-600">
-                                        Voici un aperçu de votre activité de médiation
-                                    </p>
-                                </div>
+                            </div>
+                            <div className="ml-4">
+                                <h3 className="text-lg font-medium text-gray-900">
+                                    Bonjour {auth.user.name} !
+                                </h3>
+                                <p className="text-gray-600">
+                                    Voici votre aperçu d'activité de médiation pour aujourd'hui
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Statistiques */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        
-                        {/* Total Dossiers */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow">
-                            <div className="p-6">
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0">
-                                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                            <span className="text-2xl">📁</span>
-                                        </div>
-                                    </div>
-                                    <div className="ml-4">
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
-                                            Total Dossiers
-                                        </dt>
-                                        <dd className="text-3xl font-bold text-gray-900">
-                                            {dashboardStats.total_dossiers}
-                                        </dd>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {/* Statistiques avec shadcn/ui Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <DashboardCard
+                            title="Total Dossiers"
+                            value={dashboardStats.total_dossiers}
+                            description="Tous dossiers confondus"
+                            trend={12}
+                            icon={FolderOpen}
+                        />
 
-                        {/* Dossiers Actifs */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow">
-                            <div className="p-6">
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0">
-                                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                            <span className="text-2xl">🔥</span>
-                                        </div>
-                                    </div>
-                                    <div className="ml-4">
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
-                                            En Cours
-                                        </dt>
-                                        <dd className="text-3xl font-bold text-green-600">
-                                            {dashboardStats.dossiers_actifs}
-                                        </dd>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <DashboardCard
+                            title="Dossiers Actifs"
+                            value={dashboardStats.dossiers_actifs}
+                            description="En cours de traitement"
+                            trend={8}
+                            icon={Activity}
+                        />
 
-                        {/* Notifications */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow">
-                            <div className="p-6">
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0">
-                                        <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                            <span className="text-2xl">🔔</span>
-                                        </div>
-                                    </div>
-                                    <div className="ml-4">
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
-                                            Notifications
-                                        </dt>
-                                        <dd className="flex items-center">
-                                            <span className="text-3xl font-bold text-orange-600">
-                                                {dashboardStats.notifications}
-                                            </span>
-                                            {dashboardStats.notifications > 0 && (
-                                                <span className="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
-                                                    Nouveau
-                                                </span>
-                                            )}
-                                        </dd>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <DashboardCard
+                            title="Notifications"
+                            value={dashboardStats.notifications}
+                            description="À traiter"
+                            trend={-2}
+                            icon={Bell}
+                        />
 
-                        {/* Taux de Réussite */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow">
-                            <div className="p-6">
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0">
-                                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                            <span className="text-2xl">📊</span>
-                                        </div>
-                                    </div>
-                                    <div className="ml-4">
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
-                                            Taux Réussite
-                                        </dt>
-                                        <dd className="text-3xl font-bold text-purple-600">
-                                            87%
-                                        </dd>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <DashboardCard
+                            title="Taux de Réussite"
+                            value={`${dashboardStats.taux_reussite}%`}
+                            description="Médiations réussies"
+                            trend={3}
+                            icon={TrendingUp}
+                        />
                     </div>
 
-                    {/* Actions Rapides */}
+                    {/* Actions Rapides avec shadcn/ui Buttons */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         
-                        {/* Liens Rapides */}
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6">
-                                <h3 className="text-lg font-medium text-gray-900 mb-4">
-                                    Actions Rapides
-                                </h3>
-                                <div className="space-y-3">
-                                    <Link
-                                        href="/dossiers/create"
-                                        className="flex items-center p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
-                                    >
-                                        <span className="text-2xl mr-3">➕</span>
-                                        <span className="font-medium text-blue-700">Nouveau Dossier</span>
+                        {/* Actions rapides */}
+                        <div className="bg-white rounded-lg border shadow-sm p-6">
+                            <h3 className="text-lg font-semibold mb-4 flex items-center">
+                                <Plus className="mr-2 h-5 w-5 text-blue-500" />
+                                Actions Rapides
+                            </h3>
+                            <div className="space-y-3">
+                                <Button asChild className="w-full justify-start" variant="outline">
+                                    <Link href="/dossiers/create">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Nouveau Dossier
                                     </Link>
-                                    
-                                    <Link
-                                        href="/dossiers"
-                                        className="flex items-center p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors"
-                                    >
-                                        <span className="text-2xl mr-3">📋</span>
-                                        <span className="font-medium text-green-700">Voir Tous les Dossiers</span>
+                                </Button>
+                                
+                                <Button asChild className="w-full justify-start" variant="outline">
+                                    <Link href="/dossiers">
+                                        <Eye className="mr-2 h-4 w-4" />
+                                        Voir Tous les Dossiers
                                     </Link>
-                                    
-                                    <Link
-                                        href="/dossiers/kanban"
-                                        className="flex items-center p-3 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors"
-                                    >
-                                        <span className="text-2xl mr-3">🎯</span>
-                                        <span className="font-medium text-purple-700">Vue Kanban</span>
+                                </Button>
+                                
+                                <Button asChild className="w-full justify-start" variant="outline">
+                                    <Link href="/dossiers/kanban">
+                                        <LayoutGrid className="mr-2 h-4 w-4" />
+                                        Vue Kanban
                                     </Link>
-                                </div>
+                                </Button>
                             </div>
                         </div>
 
-                        {/* Activité Récente */}
-                        <div className="lg:col-span-2 bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                            <div className="p-6">
-                                <h3 className="text-lg font-medium text-gray-900 mb-4">
-                                    Activité Récente
-                                </h3>
-                                <div className="space-y-3">
-                                    {dashboardStats.actions_recentes.map((action) => (
-                                        <div key={action.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                                            <div className="flex items-center">
-                                                <div className="flex-shrink-0 w-2 h-2 bg-green-400 rounded-full mr-3"></div>
-                                                <div>
-                                                    <p className="text-sm font-medium text-gray-900">
-                                                        {action.action}
-                                                    </p>
-                                                    <p className="text-sm text-gray-500">
-                                                        Dossier: {action.dossier}
-                                                    </p>
-                                                </div>
+                        {/* Activité récente */}
+                        <div className="lg:col-span-2 bg-white rounded-lg border shadow-sm p-6">
+                            <h3 className="text-lg font-semibold mb-4 flex items-center">
+                                <Clock className="mr-2 h-5 w-5 text-green-500" />
+                                Activité Récente
+                            </h3>
+                            <div className="space-y-4">
+                                {dashboardStats.actions_recentes.map((action) => (
+                                    <div key={action.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                                        <div className="flex items-center">
+                                            <div className={`flex-shrink-0 w-2 h-2 rounded-full mr-3 ${
+                                                action.type === 'success' ? 'bg-green-500' : 'bg-blue-500'
+                                            }`}></div>
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {action.action}
+                                                </p>
+                                                <p className="text-xs text-gray-500">
+                                                    Dossier: {action.dossier}
+                                                </p>
                                             </div>
-                                            <span className="text-xs text-gray-400">
-                                                {action.time}
-                                            </span>
                                         </div>
-                                    ))}
-                                </div>
-                                
-                                <div className="mt-4">
-                                    <Link
-                                        href="/activity"
-                                        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                                    >
+                                        <Badge variant="outline" className="text-xs">
+                                            {action.time}
+                                        </Badge>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <div className="mt-4">
+                                <Button variant="link" asChild className="p-0 h-auto">
+                                    <Link href="/activity">
                                         Voir toute l'activité →
                                     </Link>
-                                </div>
+                                </Button>
                             </div>
                         </div>
                     </div>
 
-                    {/* Dossiers Urgents */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-medium text-gray-900">
-                                    🚨 Dossiers Urgents
-                                </h3>
-                                <Link
-                                    href="/dossiers?filter=urgent"
-                                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                                >
-                                    Voir tous →
+                    {/* Dossiers urgents avec Alert */}
+                    <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-200 p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold flex items-center text-orange-900">
+                                <AlertCircle className="mr-2 h-5 w-5 text-orange-600" />
+                                Dossiers Urgents
+                            </h3>
+                            <Button variant="outline" size="sm" asChild>
+                                <Link href="/dossiers?filter=urgent">
+                                    Voir tous
                                 </Link>
+                            </Button>
+                        </div>
+                        
+                        <div className="flex items-center p-4 bg-white rounded-lg border border-orange-200">
+                            <AlertCircle className="mr-3 h-6 w-6 text-orange-500 flex-shrink-0" />
+                            <div>
+                                <p className="font-medium text-orange-900">
+                                    3 dossiers nécessitent votre attention immédiate
+                                </p>
+                                <p className="text-sm text-orange-700">
+                                    Délais d'échéance dans moins de 48h
+                                </p>
                             </div>
-                            
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                <div className="flex items-center">
-                                    <span className="text-2xl mr-3">⏰</span>
-                                    <div>
-                                        <p className="text-sm font-medium text-red-900">
-                                            3 dossiers nécessitent votre attention immédiate
-                                        </p>
-                                        <p className="text-sm text-red-700">
-                                            Délais d'échéance dans moins de 48h
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            <Badge variant="destructive" className="ml-auto">
+                                Urgent
+                            </Badge>
                         </div>
                     </div>
 
