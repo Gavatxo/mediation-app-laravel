@@ -55,8 +55,10 @@ class TiersTest extends TestCase
     #[Test]
     public function scopes_fonctionnent_correctement()
     {
-        // Nettoyer pour être sûr
-        Tiers::truncate();
+        // Pas de truncate à cause des contraintes FK
+        // Nettoyer proprement en respectant les relations
+        \App\Models\Dossier::query()->delete();
+        \App\Models\Tiers::query()->delete();
         
         // Créer des personnes physiques
         $personne1 = Tiers::factory()->create(['nom' => 'Dupont', 'prenom' => 'Jean']);
